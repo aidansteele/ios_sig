@@ -21,11 +21,38 @@ struct sc_info_record
 };
 #pragma pack()
 
+const char *description_for_key(uint8_t *key);
 int key_is_aggregate(uint8_t *key);
 struct sc_info_record *sc_info_record_alloc(void *ptr);
 void sc_info_record_free(struct sc_info_record *record);
 void sc_info_record_printf(struct sc_info_record *record, int depth);
 void hex_print(uint8_t *bytes, int length);
+
+const char *description_for_key(uint8_t *key)
+{
+    struct { const char *key; const char *description; } pairs[] =
+    {
+        {"sinf", "Encryption Info"},
+        {"frma", "Original Format"},
+        {"schm", "Scheme Type"},
+        {"schi", "Scheme Info"},
+        {"user", "User Id"},
+        {"key ", "Key Id"},
+        {"iviv", "Initialisation Vector"},
+        {"righ", "Rights"},
+        {"name", "User Name"},
+        {"priv", "Private Data"},
+        {"sign", "?"},
+    };
+    
+    int count = sizeof(pairs)/sizeof(*pairs);
+    for (int i = 0; i < count; i++)
+    {
+        if (memcmp(pairs[i].key, key, 4) == 0) return pairs[i].description;
+    }
+    
+    return NULL;
+}
 
 int key_is_aggregate(uint8_t *key)
 {
@@ -104,7 +131,7 @@ void hex_print(uint8_t *bytes, int length)
 void sc_info_record_printf(struct sc_info_record *record, int depth)
 {
     for (int i = 0; i < depth; i++) printf("\t");
-    printf("%.*s: ", (int)sizeof(record->key), record->key);
+    printf("%.*s (%s): ", (int)sizeof(record->key), record->key, description_for_key(record->key));
     
     if (key_is_aggregate(record->key))
     {
