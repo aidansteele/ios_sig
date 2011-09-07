@@ -141,6 +141,9 @@ int main (int argc, const char * argv[])
         sc_info_record_printf(record, 0);
         sc_info_record_free(record);
         
+        munmap(file, 1032);
+        close(fd);
+        
         return 0;
     }
 }
