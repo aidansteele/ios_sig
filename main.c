@@ -19,6 +19,21 @@ struct sc_info_record
         } children;        
     } value;
 };
+
+struct sc_info_righ_field
+{
+#define field(name, length) struct { uint8_t key[4]; uint8_t value[length]; } name
+    field(vendorId, 4);
+    field(_plat, 4);
+    field(versionRestrictions, 4);
+    field(_tran, 4);
+    field(itemId, 4);
+    field(_tool, 4);
+    field(_medi, 4);
+    field(_mode, 20);
+#undef field
+};
+
 #pragma pack()
 
 const char *description_for_key(uint8_t *key);
